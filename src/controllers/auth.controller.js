@@ -1,11 +1,13 @@
 import { dbConnection } from "../database";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+
 export const login = (req, res) => {
   const { username, password } = req.body;
   if (username && password && (username !== "" || password !== "")) {
     dbConnection.query(
-      "SELECT * FROM users WHERE username=? AND password=?",
-      [username,password],
+      "SELECT * FROM users WHERE username=?",
+      [username, password],
       (err, rows, fields) => {
         if (!err) {
           if (rows.length > 0) {
@@ -18,7 +20,8 @@ export const login = (req, res) => {
             });
           } else {
             return res.status(400).json({
-              message: "Datos incorrectos o no existe el usuario. En ese caso registrate...",
+              message:
+                "Datos incorrectos o no existe el usuario. En ese caso registrate...",
               token: null,
             });
           }
@@ -45,9 +48,10 @@ export const signup = (req, res) => {
       (err, rows, fields) => {
         if (!err) {
           if (!rows.length > 0) {
+            const passEncryptd = bcrypt.hashSync(password, 10);
             dbConnection.query(
               "INSERT INTO users (username,password) VALUES(?,?)",
-              [username, password],
+              [username, passEncryptd],
               (err) => {
                 if (!err) {
                   return res.status(200).json({
