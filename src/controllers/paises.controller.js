@@ -20,9 +20,12 @@ export const getPaisById = (req, res) => {
   const { id } = req.params;
   dbConnection.query("SELECT * FROM paises WHERE id = ?", [id], (err, rows) => {
     if (!err) {
-      return res.status(200),json({
-        pais: rows,
-      });
+      return (
+        res.status(200),
+        json({
+          pais: rows,
+        })
+      );
     } else {
       console.error(err);
       return res.status(400).json({
@@ -44,9 +47,10 @@ export const createPais = (req, res) => {
     moneda,
     continente,
     extension,
+    link_img,
   } = req.body;
   dbConnection.query(
-    "INSERT INTO paises ( nombre_oficial, nombre_comun, fechaCreacion, capital, idioma_oficial, gentilico, moneda, continente, extension) VALUES(?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO paises ( nombre_oficial, nombre_comun,link_img, fechaCreacion, capital, idioma_oficial, gentilico, moneda, continente, extension) VALUES(?,?,?,?,?,?,?,?,?)",
     [
       nombre_oficial,
       nombre_comun,
@@ -57,6 +61,7 @@ export const createPais = (req, res) => {
       moneda,
       continente,
       extension,
+      link_img,
     ],
     (err, rows) => {
       if (!err) {
@@ -72,14 +77,18 @@ export const createPais = (req, res) => {
             moneda,
             continente,
             extension,
+            link_img,
           },
         });
       } else {
         console.error(err);
-        return res.status(400),json({
-          message: "Error at save pais",
-          error: err,
-        });
+        return (
+          res.status(400),
+          json({
+            message: "Error at save pais",
+            error: err,
+          })
+        );
       }
     }
   );
@@ -97,13 +106,15 @@ export const updatePais = (req, res) => {
     moneda,
     continente,
     extension,
+    link_img,
   } = req.body;
   const updatedAt = new Date();
   dbConnection.query(
-    "UPDATE paises SET nombre_oficial=?, nombre_comun=?, fechaCreacion=?, capital=?, idioma_oficial=?, gentilico=?, moneda=?, continente=?, extension=?,updatedAt=? WHERE id=?",
+    "UPDATE paises SET nombre_oficial=?, nombre_comun=?, link_img=? fechaCreacion=?, capital=?, idioma_oficial=?, gentilico=?, moneda=?, continente=?, extension=?,updatedAt=? WHERE id=?",
     [
       nombre_oficial,
       nombre_comun,
+      link_img,
       fechaCreacion,
       capital,
       idioma_oficial,
@@ -122,6 +133,7 @@ export const updatePais = (req, res) => {
             id,
             nombre_oficial,
             nombre_comun,
+            link_img,
             fechaCreacion,
             capital,
             idioma_oficial,
@@ -129,7 +141,7 @@ export const updatePais = (req, res) => {
             moneda,
             continente,
             extension,
-            updatedAt
+            updatedAt,
           },
         });
       } else {
